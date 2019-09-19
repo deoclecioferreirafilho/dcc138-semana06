@@ -14,3 +14,7 @@ AssetsManager.prototype.loadImage = function(key, url){
     imagem.src =url;
     this.assets[key] = imagem;
 }
+
+AssetsManager.prototype.img = function(key){
+    return this.assets[key];
+}

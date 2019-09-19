@@ -8,6 +8,7 @@
     <title>Semana 04 Deo</title>
     <script src="Sprite.js"></script>
     <script src="Scene.js"></script>
+    <script src="assetsManager.js"></script>
 </head>
 
 <body>
@@ -15,13 +16,15 @@
    
     <canvas></canvas>
     <script>
-        var imgplayer = new Image();
+        var assetsMng = new assetsMng();
+        assetsMng.loadImage("player", "assets/player_ship.png");
+       /* var imgplayer = new Image();
         imgplayer.addEventListener("load", function(){
             console.log("imagens carregadas");
         });
         console.log("carregando...");
         imgplayer.src = "assets/player_ship.png"
-        
+        */
         var canvas = document.querySelector("canvas");
         canvas.width = 600;
         canvas.height = 400;
@@ -118,7 +121,10 @@
         function passo(t) {
             dt = (t - anterior) / 1000;
             cena1.passo(dt);
-            ctx.drawImage(imgplayer, 20,20)
+           // ctx.drawImage(imgplayer, 20,20)
+
+           ctx.drawImage(assetsMng.assets.img("player"),)
+
             anterior = t;
             ctx.fillText(1 / dt, 10, 20);
             requestAnimationFrame(passo);
