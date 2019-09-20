@@ -2,8 +2,8 @@ function Sprite(params = {}) {
     var exemplo = {
         x: 10,
         y: 100,
-        h: 20,
-        w: 10,
+        h: 32,
+        w: 32,
         vx: 0,
         vy: 0,
         ax: 0,
@@ -26,15 +26,24 @@ Sprite.prototype = new Sprite({});
 Sprite.prototype.constructor = Sprite;
 
 Sprite.prototype.desenhar = function (ctx) {
-    ctx.save();
     //ctx.fillRect(-this.w/2, -this.h/2, this.w, this.h);
+    ctx.save();
     ctx.translate(this.x, this.y);
-    ctx.rotate(this.a);
-    //ctx.strokeRect(-this.w/2, -this.h/2, this.w, this.h);
+    ctx.strokeRect(-this.w/2, -this.h/2, this.w, this.h);
+    ctx.rotate(this.a + Math.PI/2);
+    ctx.drawImage(
+        this.scene.assets.img("player"),
+        -this.w/2,
+        -this.h/2,
+        this.w,
+        this.h
+    );
+
+
+    /*
     ctx.fillStyle = this.color;
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
-
     ctx.beginPath();
     ctx.moveTo(-this.w / 2, -this.h / 2);
     ctx.lineTo(-this.w / 2, +this.h / 2);
@@ -42,6 +51,7 @@ Sprite.prototype.desenhar = function (ctx) {
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
+    */
     ctx.restore();
 };
 

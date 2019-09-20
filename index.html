@@ -13,18 +13,20 @@
 
 <body>
 
-   
+
     <canvas></canvas>
     <script>
-        var assetsMng = new assetsMng();
+        var assetsMng = new AssetsManager();
         assetsMng.loadImage("player", "assets/player_ship.png");
-       /* var imgplayer = new Image();
-        imgplayer.addEventListener("load", function(){
-            console.log("imagens carregadas");
-        });
-        console.log("carregando...");
-        imgplayer.src = "assets/player_ship.png"
-        */
+        assetsMng.loadImage("enemy_1", "assets/enemy_1.png");
+
+        /* var imgplayer = new Image();
+         imgplayer.addEventListener("load", function(){
+             console.log("imagens carregadas");
+         });
+         console.log("carregando...");
+         imgplayer.src = "assets/player_ship.png"
+         */
         var canvas = document.querySelector("canvas");
         canvas.width = 600;
         canvas.height = 400;
@@ -36,27 +38,27 @@
             direita: 0,
             baixo: 0
         }
-        var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height });
-        var pc = new Sprite({ x: 150, y: 150, comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" } });
+        var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng });
+        var pc = new Sprite({ x: 150, y: 150, comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" }, desenhar: desenhaPC});
         cena1.adicionar(pc);
         cena1.adicionar(new Sprite({
-            x: 460, y: 150, w: 15, va: 2, vm: 30, color: "red",
-            comportar: persegue2(pc), props: { tipo: "npc", spawn: 0 }
+            x: 460, y: 150, w: 32, h:32, va: 2, vm: 30, color: "red",
+            comportar: persegue2(pc), props: { tipo: "npc", spawn: 3}, desenhar: desenhaNPC
         }));
-            cena1.adicionar(new Sprite({
-                    x: 150, y: 50, w: 50, va: 4, vm: 80, color: "yellow",
-                    comportar: persegue2(pc), props: { tipo: "npc" }
-                }));
+        cena1.adicionar(new Sprite({
+            x: 150, y: 50, va: 4, vm: 80, color: "yellow",
+            comportar: persegue2(pc), props: { tipo: "npc" }, desenhar: desenhaNPC
+        }));
 
         for (var k = 0; k < 10; k++) {
             cena1.adicionar(new Sprite({
                 x: 300 * Math.random(),
                 y: 400 * Math.random(),
-                h: 20,
+                h: 32,
                 va: 2 * Math.random(),
                 vm: 40 * Math.random(),
                 color: "red", comportar: persegue2(pc),
-                props: { tipo: "npc" }
+                props: { tipo: "npc" }, desenhar: desenhaNPC
             }));
         }
         function persegue(alvo) {
@@ -93,13 +95,47 @@
                         x: this.x, y: this.y,
                         vm: 100 * Math.random(),
                         props: { tipo: "npc" },
-                        comportar: persegue2(alvo)
+                        comportar: persegue2(alvo), desenhar: desenhaNPC
                     });
                     this.Scene.adicionar(novo);
                 }
                 //this.vm = 30;
             }
         }
+
+        function desenhaPC(){
+             ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.fillRect(-this.w/2, -this.h / 2 -5, this.w, 4);
+            ctx.strokeRect(-this.w / 2, -this.h / 2, this.w, this.h);
+            ctx.rotate(this.a );
+            ctx.rotate( Math.PI / 2);
+            ctx.drawImage(
+                this.scene.assets.img("player"),
+                -this.w / 2,
+                -this.h / 2,
+                this.w,
+                this.h
+            );
+            ctx.restore();
+        }
+
+         function desenhaNPC() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.strokeRect(-this.w / 2, -this.h / 2, this.w, this.h);
+                ctx.rotate(this.a + Math.PI / 2);
+                ctx.drawImage(
+                    this.scene.assets.img("enemy_1"),
+                    -this.w / 2,
+                    -this.h / 2,
+                    this.w,
+                    this.h
+                );
+                ctx.restore();
+            }
+
+
         function porTeclasDirecionais(teclas) {
             return function () {
                 if (teclas.esquerda) { this.va = -2; }
@@ -113,7 +149,7 @@
                         x: this.x, y: this.y, a: this.a - 0.1 + 0.2 * Math.random(),
                         vm: 240, color: "green", w: 4, h: 4, props: { tipo: "tiro" }
                     });
-                    this.Scene.adicionar(tiro);
+                    this.scene.adicionar(tiro);
                     this.cooldown = 0.5;
                 }
             }
@@ -121,10 +157,6 @@
         function passo(t) {
             dt = (t - anterior) / 1000;
             cena1.passo(dt);
-           // ctx.drawImage(imgplayer, 20,20)
-
-           ctx.drawImage(assetsMng.assets.img("player"),)
-
             anterior = t;
             ctx.fillText(1 / dt, 10, 20);
             requestAnimationFrame(passo);
@@ -176,4 +208,4 @@
         });
     </script>
 
-</body          
+</body

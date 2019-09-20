@@ -3,12 +3,13 @@ function AssetsManager(){
     this.carregadas = 0;
     this.assets = {};
 }
+
 AssetsManager.prototype.loadImage = function(key, url){
     console.log (`Carregando imagem  ${url}...`)
     this.aCarregar++;
     var imagem = new Image();
-    console.log(`Imagem ${key}: ${url} carregada`);
     imagem.addEventListener('load',function(){
+        console.log(`Imagem ${key}: ${url} carregada`);
         this.carregadas++;
     });
     imagem.src =url;
