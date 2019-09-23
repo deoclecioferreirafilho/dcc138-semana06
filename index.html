@@ -19,6 +19,7 @@
         var assetsMng = new AssetsManager();
         assetsMng.loadImage("player", "assets/player_ship.png");
         assetsMng.loadImage("enemy_1", "assets/enemy_1.png");
+        assetsMng.loadImage("explosion", "assets/explosion.png");
 
         /* var imgplayer = new Image();
          imgplayer.addEventListener("load", function(){
@@ -38,9 +39,15 @@
             direita: 0,
             baixo: 0
         }
+
+        var boom = new Explosion({x: 100, y:100, w:60, h:64});
+        console.log (boom);
+
+
         var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng });
         var pc = new Sprite({ x: 150, y: 150, comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" }, desenhar: desenhaPC});
         cena1.adicionar(pc);
+        cena1.adicionar(boom);
         cena1.adicionar(new Sprite({
             x: 460, y: 150, w: 32, h:32, va: 2, vm: 30, color: "red",
             comportar: persegue2(pc), props: { tipo: "npc", spawn: 3}, desenhar: desenhaNPC
@@ -90,7 +97,7 @@
                 this.va = 2 * (prod - 0);
                 this.props.Spawn -= (1 / 60);
                 if (this.props.Spawn <= 0) {
-                    this.props.Spawn = 2;
+                    this.props.Spawn = 5;
                     var novo = new Sprite({
                         x: this.x, y: this.y,
                         vm: 100 * Math.random(),
@@ -107,7 +114,7 @@
              ctx.save();
             ctx.translate(this.x, this.y);
             ctx.fillRect(-this.w/2, -this.h / 2 -5, this.w, 4);
-            ctx.strokeRect(-this.w / 2, -this.h / 2, this.w, this.h);
+          //  ctx.strokeRect(-this.w / 2, -this.h / 2, this.w, this.h);
             ctx.rotate(this.a );
             ctx.rotate( Math.PI / 2);
             ctx.drawImage(
@@ -123,7 +130,7 @@
          function desenhaNPC() {
                 ctx.save();
                 ctx.translate(this.x, this.y);
-                ctx.strokeRect(-this.w / 2, -this.h / 2, this.w, this.h);
+               // ctx.strokeRect(-this.w / 2, -this.h / 2, this.w, this.h);
                 ctx.rotate(this.a + Math.PI / 2);
                 ctx.drawImage(
                     this.scene.assets.img("enemy_1"),
@@ -150,13 +157,15 @@
                         vm: 240, color: "green", w: 4, h: 4, props: { tipo: "tiro" }
                     });
                     this.scene.adicionar(tiro);
-                    this.cooldown = 0.5;
+                    this.cooldown = 0.3;
                 }
             }
         }
         function passo(t) {
             dt = (t - anterior) / 1000;
-            cena1.passo(dt);
+            if(assetsMng.progresso() === 100){
+                cena1.passo(dt);
+            }
             anterior = t;
             ctx.fillText(1 / dt, 10, 20);
             requestAnimationFrame(passo);

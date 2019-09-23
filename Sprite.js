@@ -29,7 +29,7 @@ Sprite.prototype.desenhar = function (ctx) {
     //ctx.fillRect(-this.w/2, -this.h/2, this.w, this.h);
     ctx.save();
     ctx.translate(this.x, this.y);
-    ctx.strokeRect(-this.w/2, -this.h/2, this.w, this.h);
+    ///ctx.strokeRect(-this.w/2, -this.h/2, this.w, this.h);
     ctx.rotate(this.a + Math.PI/2);
     ctx.drawImage(
         this.scene.assets.img("player"),
