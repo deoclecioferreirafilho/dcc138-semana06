@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 
 <head>
@@ -17,9 +17,12 @@
         var assetsMng = new AssetsManager();
         assetsMng.loadImage("player", "assets/player_ship.png");
         assetsMng.loadImage("enemy_1", "assets/enemy_1.png");
+        assetsMng.loadImage("enemy_3", "assets/enemy_3.png");
+        assetsMng.loadImage("tiro", "assets/tiro.png");
+        assetsMng.loadImage("boss1", "assets/boss1.png");
         assetsMng.loadImage("explosion", "assets/explosion.png");
         assetsMng.loadAudio("explosion", "assets/explosion.mp3");
-        assetsMng.loadAudio("fire", "assets/fire.mp3");
+        assetsMng.loadAudio("tiro", "assets/tiro.mp3");
         console.log(assetsMng);
         var canvas = document.querySelector("canvas");
         canvas.width = 600;
@@ -35,10 +38,12 @@
         var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng });
         var boom = new Explosion({ x: 100, y: 100, w: 64, h: 64 });
 
-        var pc = new Sprite({ x: 150, y: 150, w: 32, h: 32, comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" }, desenhar: desenhaPC });
+        var pc = new Sprite({ x: 150, y: 150, w: 64, h: 64, comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" }, desenhar: desenhaPC });
         cena1.adicionar(pc);
         cena1.adicionar(boom);
-        cena1.adicionar(new Sprite({ x: 460, y: 150, w: 32, h: 32, va: 2, vm: 30, color: "green", comportar: persegueSpawn(pc), props: { tipo: "npc", spawn: 0 } }));
+        cena1.adicionar(new Sprite({ x: 460, y: 150, w: 32, h: 32, va: 2, vm: 30, color: "green", comportar: persegueSpawn(pc), props: { tipo: "npc", spawn: 0 }, desenhar: desenhaNPC }));
+
+
         for (var k = 0; k < 10; k++) {
             cena1.adicionar(new Sprite({
                 x: 300 * Math.random(),
@@ -51,6 +56,7 @@
                 desenhar: desenhaNPC
             }));
         }
+
         function persegue(alvo) {
             return function () {
                 this.vx = 20 * Math.sign(alvo.x - this.x);
@@ -85,6 +91,7 @@
                         x: this.x, y: this.y,
                         vm: 100 * Math.random(),
                         props: { tipo: "npc" },
+                        desenhar: desenhaNPC2,
                         comportar: persegue2(alvo)
                     });
                     this.scene.adicionar(novo);
@@ -97,7 +104,7 @@
             ctx.translate(this.x, this.y);
             ctx.rotate(this.a + Math.PI / 2);
             ctx.drawImage(
-                this.scene.assets.img("player"),
+                this.scene.assets.img("boss1"),
                 -this.w / 2,
                 -this.h / 2,
                 this.w,
@@ -118,6 +125,34 @@
             );
             ctx.restore();
         }
+
+        function desenhaNPC2() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.a + Math.PI / 2);
+            ctx.drawImage(
+                this.scene.assets.img("enemy_3"),
+                -this.w / 2,
+                -this.h / 2,
+                this.w,
+                this.h
+            );
+            ctx.restore();
+        }
+        function desenhaTIRO() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.a - Math.PI / 2);
+            ctx.drawImage(
+                this.scene.assets.img("tiro"),
+                -this.w / 2,
+                -this.h / 2,
+                this.w,
+                this.h
+            );
+            ctx.restore();
+        }
+
         function porTeclasDirecionais(teclas) {
             return function () {
                 if (teclas.esquerda) { this.va = -2; }
@@ -130,11 +165,13 @@
                     var tiro = new Sprite({
                         x: this.x, y: this.y,
                         a: this.a - 0.1 + 0.2 * Math.random(),
-                        vm: 240, color: "green", w: 4, h: 4,
+                        vm: 240, w: 10, h: 20,
+                        desenhar: desenhaTIRO,
                         props: { tipo: "tiro" }
                     });
                     this.scene.adicionar(tiro);
-                    this.cooldown = 0.2;
+                    this.cooldown = 0.1;
+                    assetsMng.play("tiro");
                 }
             }
         }
